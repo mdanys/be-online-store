@@ -1,0 +1,5 @@
+*.env
+*.out
+*cover
+.vscode
+launch.json
