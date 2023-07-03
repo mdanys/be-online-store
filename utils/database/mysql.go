@@ -13,14 +13,14 @@ import (
 )
 
 // FUNC TO INITIALIZE DATABASE CONFIG
-func InitDatabase(c *config.AppConfig) (dbConn *sql.DB, err error) {
+func InitDatabase(c *config.AppConfig) *sql.DB {
 	connection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", c.DBUser, c.DBPass, c.DBHost, c.DBPort, c.DBName)
 	val := url.Values{}
 	val.Add("multiStatements", "true")
 	val.Add("parseTime", "1")
 	val.Add("loc", "Asia/Jakarta")
 	dsn := fmt.Sprintf("%s?%s", connection, val.Encode())
-	dbConn, err = sql.Open(`mysql`, dsn)
+	dbConn, err := sql.Open(`mysql`, dsn)
 
 	if err != nil {
 		log.Fatal(err)
@@ -30,12 +30,12 @@ func InitDatabase(c *config.AppConfig) (dbConn *sql.DB, err error) {
 		log.Fatal(err)
 	}
 
-	defer func() {
-		err := dbConn.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+	// defer func() {
+	// 	err := dbConn.Close()
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// }()
 
 	// Migrate database if any new schema
 	driver, err := mysql.WithInstance(dbConn, &mysql.Config{})
@@ -65,5 +65,5 @@ func InitDatabase(c *config.AppConfig) (dbConn *sql.DB, err error) {
 		log.Warn(err)
 	}
 
-	return
+	return dbConn
 }

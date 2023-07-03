@@ -4,8 +4,8 @@ import (
 	"be-online-store/config"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -28,7 +28,7 @@ func GenerateToken(id int, role string) (s string, err error) {
 func ExtractToken(c *fiber.Ctx) (id int, role string) {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	id = claims["id"].(int)
+	id = int(claims["id"].(float64))
 	role = claims["role"].(string)
 
 	return

@@ -20,7 +20,7 @@ func NewMySQLUserRepository(Conn *sql.DB) domain.UserMySQLRepository {
 }
 
 func (db *mysqlUserRepository) SelectUserLogin(ctx context.Context, req domain.LoginRequest) (user domain.User, err error) {
-	query := `SELECT id, email, name, role, dob, gender, address, user_picture, dtm_crt, dtm_upd FROM user WHERE email = ?`
+	query := `SELECT id, email, password, name, role, dob, gender, address, user_picture, dtm_crt, dtm_upd FROM user WHERE email = ?`
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
@@ -30,7 +30,7 @@ func (db *mysqlUserRepository) SelectUserLogin(ctx context.Context, req domain.L
 	}
 
 	row := stmt.QueryRowContext(ctx, req.Email)
-	err = row.Scan(&user.ID, &user.Email, &user.Name, &user.Role, &user.Dob, &user.Gender, &user.Address, &user.UserPicture, &user.DtmCrt, &user.DtmUpd)
+	err = row.Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Role, &user.Dob, &user.Gender, &user.Address, &user.UserPicture, &user.DtmCrt, &user.DtmUpd)
 	if err != nil {
 		err = errors.New("user not found")
 		log.Error(err)
@@ -52,7 +52,6 @@ func (db *mysqlUserRepository) InsertUser(ctx context.Context, req domain.UserRe
 
 	res, err := stmt.ExecContext(ctx, req.Email, req.Password, req.Name, "customer", req.Dob, req.Gender, req.Address, req.UserPicture)
 	if err != nil {
-		err = errors.New("failed to create user")
 		log.Error(err)
 		return
 	}
@@ -67,7 +66,7 @@ func (db *mysqlUserRepository) InsertUser(ctx context.Context, req domain.UserRe
 }
 
 func (db *mysqlUserRepository) SelectUserByID(ctx context.Context, id int64) (user domain.User, err error) {
-	query := `SELECT id, email, name, role, dob, gender, address, user_picture, dtm_crt, dtm_upd FROM user WHERE id = ?`
+	query := `SELECT id, email, password, name, role, dob, gender, address, user_picture, dtm_crt, dtm_upd FROM user WHERE id = ?`
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
@@ -77,9 +76,8 @@ func (db *mysqlUserRepository) SelectUserByID(ctx context.Context, id int64) (us
 	}
 
 	row := stmt.QueryRowContext(ctx, id)
-	err = row.Scan(&user.ID, &user.Email, &user.Name, &user.Role, &user.Dob, &user.Gender, &user.Address, &user.UserPicture, &user.DtmCrt, &user.DtmUpd)
+	err = row.Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Role, &user.Dob, &user.Gender, &user.Address, &user.UserPicture, &user.DtmCrt, &user.DtmUpd)
 	if err != nil {
-		err = errors.New("user not found")
 		log.Error(err)
 		return
 	}

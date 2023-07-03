@@ -17,7 +17,7 @@ import (
 func main() {
 	app := fiber.New()
 	cfg := config.NewConfig()
-	dbConn, _ := database.InitDatabase(cfg)
+	dbConn := database.InitDatabase(cfg)
 
 	app.Use(cors.New())
 	app.Use(logger.New(logger.Config{

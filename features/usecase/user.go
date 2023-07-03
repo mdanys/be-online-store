@@ -20,49 +20,51 @@ func NewUserUsecase(userMySQLRepo domain.UserMySQLRepository) domain.UserUsecase
 	}
 }
 
-func (uu *userUsecase) GetUserLogin(ctx context.Context, req domain.LoginRequest) (user domain.UserLogin, err error) {
+func (uu *userUsecase) GetUserLogin(ctx context.Context, req domain.LoginRequest) (user domain.UserResponse, err error) {
 	data, err := uu.userMySQLRepo.SelectUserLogin(ctx, req)
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(data.Password), []byte(req.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(*data.Password), []byte(req.Password))
 	if err != nil {
 		err = errors.New("password not match")
 		log.Error(err)
 		return
 	}
 
-	s, err := middleware.GenerateToken(int(data.ID), data.Role)
+	s, err := middleware.GenerateToken(int(data.ID), *data.Role)
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
-	user.Token = s
-	user.ID = data.ID
-	user.Email = data.Email
-	user.Name = data.Name
-	user.Role = data.Role
-	user.Dob = data.Dob
-	user.Gender = data.Gender
-	user.Address = data.Address
-	user.UserPicture = data.UserPicture
-	user.DtmCrt = data.DtmCrt
-	user.DtmUpd = data.DtmUpd
+	user = domain.UserResponse{
+		ID:          data.ID,
+		Email:       data.Email,
+		Name:        data.Name,
+		Role:        data.Role,
+		Dob:         data.Dob,
+		Gender:      data.Gender,
+		Address:     data.Address,
+		UserPicture: data.UserPicture,
+		DtmCrt:      data.DtmCrt,
+		DtmUpd:      data.DtmUpd,
+		Token:       &s,
+	}
 
 	return
 }
 
 func (uu *userUsecase) CreateUser(ctx context.Context, req domain.UserRequest) (user domain.User, err error) {
-	generate, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	generate, err := bcrypt.GenerateFromPassword([]byte(*req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		err = errors.New("cannot encrypt password")
 		log.Error(err)
 		return
 	}
-	req.Password = string(generate)
+	*req.Password = string(generate)
 
 	id, err := uu.userMySQLRepo.InsertUser(ctx, req)
 	if err != nil {
@@ -91,10 +93,24 @@ func (uu *userUsecase) GetUserByID(ctx context.Context, id int64) (user domain.U
 
 func (uu *userUsecase) GetAllUser(ctx context.Context, page, limit int64) (res domain.GetAllResponse, err error) {
 	offset := limit * (page - 1)
-	res.Data, err = uu.userMySQLRepo.SelectAllUser(ctx, offset, limit)
+	user, err := uu.userMySQLRepo.SelectAllUser(ctx, offset, limit)
 	if err != nil {
 		log.Error(err)
 		return
+	}
+
+	for _, v := range user {
+		res.Data = append(res.Data, domain.UserResponse{
+			ID:          v.ID,
+			Email:       v.Email,
+			Name:        v.Name,
+			Dob:         v.Dob,
+			Gender:      v.Gender,
+			Address:     v.Address,
+			UserPicture: v.UserPicture,
+			DtmCrt:      v.DtmCrt,
+			DtmUpd:      v.DtmUpd,
+		})
 	}
 
 	res.Metadata = domain.Metadata{
@@ -114,35 +130,35 @@ func (uu *userUsecase) UpdateUser(ctx context.Context, id int64, req domain.User
 		return
 	}
 
-	if req.Password != "" {
-		generate, er := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if req.Password != nil {
+		generate, er := bcrypt.GenerateFromPassword([]byte(*req.Password), bcrypt.DefaultCost)
 		if er != nil {
 			err = errors.New("cannot encrypt password")
 			log.Error(err)
 			return
 		}
-		req.Password = string(generate)
-	} else if req.Password == "" {
+		*req.Password = string(generate)
+	} else if req.Password == nil {
 		req.Password = user.Password
 	}
 
-	if req.Name == "" {
+	if req.Name == nil {
 		req.Name = user.Name
 	}
 
-	if req.Dob == "" {
+	if req.Dob == nil {
 		req.Dob = user.Dob
 	}
 
-	if req.Gender == "" {
+	if req.Gender == nil {
 		req.Gender = user.Gender
 	}
 
-	if req.Address == "" {
+	if req.Address == nil {
 		req.Address = user.Address
 	}
 
-	if req.UserPicture == "" {
+	if req.UserPicture == nil {
 		req.UserPicture = user.UserPicture
 	}
 
