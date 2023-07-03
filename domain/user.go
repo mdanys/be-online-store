@@ -66,6 +66,7 @@ type UserMySQLRepository interface {
 	InsertUser(ctx context.Context, req UserRequest) (id int64, err error)
 	SelectUserByID(ctx context.Context, id int64) (user User, err error)
 	SelectAllUser(ctx context.Context, offset, limit int64) (user []User, err error)
+	EditUser(ctx context.Context, id int64, req UserRequest) (err error)
 }
 
 // UserUsecase is User usecase
@@ -74,4 +75,5 @@ type UserUsecase interface {
 	CreateUser(ctx context.Context, req UserRequest) (user User, err error)
 	GetUserByID(ctx context.Context, id int64) (user User, err error)
 	GetAllUser(ctx context.Context, page, limit int64) (res GetAllResponse, err error)
+	UpdateUser(ctx context.Context, id int64, req UserRequest) (err error)
 }

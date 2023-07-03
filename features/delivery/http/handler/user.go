@@ -6,6 +6,7 @@ import (
 	"be-online-store/utils/middleware"
 	"strconv"
 
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
 )
@@ -13,6 +14,10 @@ import (
 type UserHandler struct {
 	UserUsecase domain.UserUsecase
 }
+
+var (
+	validate = validator.New()
+)
 
 func (uh *UserHandler) Login(c *fiber.Ctx) (err error) {
 	var input domain.LoginRequest
@@ -31,6 +36,11 @@ func (uh *UserHandler) Login(c *fiber.Ctx) (err error) {
 func (uh *UserHandler) CreateUser(c *fiber.Ctx) (err error) {
 	var input domain.UserRequest
 	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+	}
+
+	err = validate.Struct(input)
+	if err != nil {
 		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 	}
 
@@ -90,4 +100,35 @@ func (uh *UserHandler) GetAllUser(c *fiber.Ctx) (err error) {
 	}
 
 	return c.Status(fasthttp.StatusOK).JSON(res)
+}
+
+func (uh *UserHandler) UpdateUser(c *fiber.Ctx) (err error) {
+	id, role := middleware.ExtractToken(c)
+	if role != "customer" {
+		return c.Status(fasthttp.StatusUnauthorized).SendString("Only customer")
+	}
+
+	var input domain.UserRequest
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+	}
+
+	file, err := c.FormFile("user_picture")
+	if err != nil {
+		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+	}
+
+	if file != nil {
+		input.UserPicture, err = aws.UploadFile(file)
+		if err != nil {
+			return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+		}
+	}
+
+	err = uh.UserUsecase.UpdateUser(c.Context(), int64(id), input)
+	if err != nil {
+		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
+	}
+
+	return c.Status(fasthttp.StatusOK).SendString("Success")
 }

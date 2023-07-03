@@ -106,3 +106,51 @@ func (uu *userUsecase) GetAllUser(ctx context.Context, page, limit int64) (res d
 
 	return
 }
+
+func (uu *userUsecase) UpdateUser(ctx context.Context, id int64, req domain.UserRequest) (err error) {
+	user, err := uu.userMySQLRepo.SelectUserByID(ctx, id)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if req.Password != "" {
+		generate, er := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if er != nil {
+			err = errors.New("cannot encrypt password")
+			log.Error(err)
+			return
+		}
+		req.Password = string(generate)
+	} else if req.Password == "" {
+		req.Password = user.Password
+	}
+
+	if req.Name == "" {
+		req.Name = user.Name
+	}
+
+	if req.Dob == "" {
+		req.Dob = user.Dob
+	}
+
+	if req.Gender == "" {
+		req.Gender = user.Gender
+	}
+
+	if req.Address == "" {
+		req.Address = user.Address
+	}
+
+	if req.UserPicture == "" {
+		req.UserPicture = user.UserPicture
+	}
+
+	err = uu.userMySQLRepo.EditUser(ctx, id, req)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}
