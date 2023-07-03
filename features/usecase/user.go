@@ -88,3 +88,21 @@ func (uu *userUsecase) GetUserByID(ctx context.Context, id int64) (user domain.U
 
 	return
 }
+
+func (uu *userUsecase) GetAllUser(ctx context.Context, page, limit int64) (res domain.GetAllResponse, err error) {
+	offset := limit * (page - 1)
+	res.Data, err = uu.userMySQLRepo.SelectAllUser(ctx, offset, limit)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	res.Metadata = domain.Metadata{
+		TotalData: int64(len(res.Data)),
+		TotalPage: (int64(len(res.Data)) + limit - 1) / limit,
+		Page:      page,
+		Limit:     limit,
+	}
+
+	return
+}

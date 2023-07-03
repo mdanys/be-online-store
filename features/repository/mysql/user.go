@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -81,6 +82,40 @@ func (db *mysqlUserRepository) SelectUserByID(ctx context.Context, id int64) (us
 		err = errors.New("user not found")
 		log.Error(err)
 		return
+	}
+
+	return
+}
+
+func (db *mysqlUserRepository) SelectAllUser(ctx context.Context, offset, limit int64) (user []domain.User, err error) {
+	query := `SELECT id, email, name, dob, gender, address, user_picture, dtm_crt, dtm_upd FROM user WHERE role = 'customer'`
+
+	if limit > 0 {
+		query += " LIMIT " + strconv.Itoa(int(limit))
+	}
+
+	if offset > 0 {
+		query += " OFFSET " + strconv.Itoa(int(offset))
+	}
+
+	log.Debug(query)
+
+	rows, err := db.Conn.QueryContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var i domain.User
+		err = rows.Scan(&i.ID, &i.Email, &i.Name, &i.Dob, &i.Gender, &i.Address, &i.UserPicture, &i.DtmCrt, &i.DtmUpd)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
+		user = append(user, i)
 	}
 
 	return
