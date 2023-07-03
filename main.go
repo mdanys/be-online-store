@@ -27,7 +27,10 @@ func main() {
 	userRepo := mysql.NewMySQLUserRepository(dbConn)
 	userUsecase := usecase.NewUserUsecase(userRepo)
 
-	http.RouteAPI(app, userUsecase)
+	categoryRepo := mysql.NewMySQLCategoryRepository(dbConn)
+	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
+
+	http.RouteAPI(app, userUsecase, categoryUsecase)
 
 	if err := app.Listen(":" + strconv.Itoa(config.NewConfig().ServerPort)); err != nil {
 		log.Fatal(err)
