@@ -8,7 +8,7 @@ import (
 type User struct {
 	ID          int64     `json:"id"`
 	Email       string    `json:"email"`
-	Password    string    `json:"password"`
+	Password    string    `json:"password,omitempty"`
 	Name        string    `json:"name"`
 	Role        string    `json:"role"`
 	Dob         string    `json:"dob"`
@@ -59,4 +59,5 @@ type UserMySQLRepository interface {
 type UserUsecase interface {
 	GetUserLogin(ctx context.Context, req LoginRequest) (user UserLogin, err error)
 	CreateUser(ctx context.Context, req UserRequest) (user User, err error)
+	GetUserByID(ctx context.Context, id int64) (user User, err error)
 }

@@ -51,3 +51,17 @@ func (uh *UserHandler) CreateUser(c *fiber.Ctx) (err error) {
 
 	return c.Status(fasthttp.StatusOK).JSON(res)
 }
+
+func (uh *UserHandler) GetUserByID(c *fiber.Ctx) (err error) {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+	}
+
+	res, err := uh.UserUsecase.GetUserByID(c.Context(), int64(id))
+	if err != nil {
+		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
+	}
+
+	return c.Status(fasthttp.StatusOK).JSON(res)
+}

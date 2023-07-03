@@ -78,3 +78,13 @@ func (uu *userUsecase) CreateUser(ctx context.Context, req domain.UserRequest) (
 
 	return
 }
+
+func (uu *userUsecase) GetUserByID(ctx context.Context, id int64) (user domain.User, err error) {
+	user, err = uu.userMySQLRepo.SelectUserByID(ctx, id)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}
