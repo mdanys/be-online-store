@@ -38,12 +38,25 @@ type UserLogin struct {
 	Token       string    `json:"token"`
 }
 
+type UserRequest struct {
+	Email       string `json:"email" form:"email" validate:"required,email"`
+	Password    string `json:"password" form:"password" validate:"required"`
+	Name        string `json:"name" form:"name" validate:"required"`
+	Dob         string `json:"dob" form:"dob"`
+	Gender      string `json:"gender" form:"gender"`
+	Address     string `json:"address" form:"address"`
+	UserPicture string `json:"user_picture" form:"user_picture"`
+}
+
 // UserMySQLRepository is User repository in MySQL
 type UserMySQLRepository interface {
 	SelectUserLogin(ctx context.Context, req LoginRequest) (user User, err error)
+	InsertUser(ctx context.Context, req UserRequest) (id int64, err error)
+	SelectUserByID(ctx context.Context, id int64) (user User, err error)
 }
 
 // UserUsecase is User usecase
 type UserUsecase interface {
 	GetUserLogin(ctx context.Context, req LoginRequest) (user UserLogin, err error)
+	CreateUser(ctx context.Context, req UserRequest) (user User, err error)
 }

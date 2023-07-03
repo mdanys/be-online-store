@@ -54,3 +54,27 @@ func (uu *userUsecase) GetUserLogin(ctx context.Context, req domain.LoginRequest
 
 	return
 }
+
+func (uu *userUsecase) CreateUser(ctx context.Context, req domain.UserRequest) (user domain.User, err error) {
+	generate, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		err = errors.New("cannot encrypt password")
+		log.Error(err)
+		return
+	}
+	req.Password = string(generate)
+
+	id, err := uu.userMySQLRepo.InsertUser(ctx, req)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	user, err = uu.userMySQLRepo.SelectUserByID(ctx, id)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}

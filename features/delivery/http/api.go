@@ -15,4 +15,5 @@ func RouteAPI(app *fiber.App, user domain.UserUsecase) {
 	})
 
 	app.Post("/login", handlerUser.Login)
+	app.Post("/user", handlerUser.CreateUser)
 }
