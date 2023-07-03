@@ -13,14 +13,14 @@ import (
 )
 
 // FUNC TO INITIALIZE DATABASE CONFIG
-func InitDatabase(c *config.AppConfig) sql.DB {
+func InitDatabase(c *config.AppConfig) (dbConn *sql.DB, err error) {
 	connection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", c.DBUser, c.DBPass, c.DBHost, c.DBPort, c.DBName)
 	val := url.Values{}
 	val.Add("multiStatements", "true")
 	val.Add("parseTime", "1")
 	val.Add("loc", "Asia/Jakarta")
 	dsn := fmt.Sprintf("%s?%s", connection, val.Encode())
-	dbConn, err := sql.Open(`mysql`, dsn)
+	dbConn, err = sql.Open(`mysql`, dsn)
 
 	if err != nil {
 		log.Fatal(err)
@@ -65,5 +65,5 @@ func InitDatabase(c *config.AppConfig) sql.DB {
 		log.Warn(err)
 	}
 
-	return *dbConn
+	return
 }

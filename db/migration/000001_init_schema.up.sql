@@ -4,10 +4,10 @@ CREATE TABLE `user` (
     `password`              VARCHAR(255)    NOT NULL,
     `name`                  VARCHAR(255)    NOT NULL,
     `role`                  VARCHAR(255)    NOT NULL,
-    `dob`                   DATE,           NOT NULL,
-    `gender`                VARCHAR(1),     NOT NULL,
+    `dob`                   DATE            NOT NULL,
+    `gender`                VARCHAR(1)      NOT NULL,
     `address`               TEXT,
-    `picture`               VARCHAR(1024),
+    `user_picture`          VARCHAR(1024),
     `dtm_crt`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `dtm_upd`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

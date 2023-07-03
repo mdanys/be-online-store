@@ -1,5 +1,6 @@
 *.env
 *.out
+*.exe
 *cover
 .vscode
 launch.json
