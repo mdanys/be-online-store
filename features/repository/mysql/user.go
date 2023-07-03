@@ -120,3 +120,33 @@ func (db *mysqlUserRepository) SelectAllUser(ctx context.Context, offset, limit 
 
 	return
 }
+
+func (db *mysqlUserRepository) EditUser(ctx context.Context, id int64, req domain.UserRequest) (err error) {
+	query := `UPDATE user SET password = ?, name = ?, dob = ?, gender = ?, address = ?, user_picture = ? WHERE id = ?`
+	log.Debug(query)
+
+	stmt, err := db.Conn.PrepareContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	res, err := stmt.ExecContext(ctx, req.Password, req.Name, req.Dob, req.Gender, req.Address, req.UserPicture, id)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if affect == 0 {
+		err = errors.New("no data updated")
+		return
+	}
+
+	return
+}

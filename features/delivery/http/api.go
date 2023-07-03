@@ -29,6 +29,7 @@ func RouteAPI(app *fiber.App, user domain.UserUsecase) {
 
 	app.Post("/login", handlerUser.Login)
 	app.Post("/user", handlerUser.CreateUser)
-	app.Get("/user/:id", handlerUser.GetUserByID)
 	app.Get("/user", authRequired(), handlerUser.GetAllUser)
+	app.Patch("/user", authRequired(), handlerUser.UpdateUser)
+	app.Get("/user/:id", handlerUser.GetUserByID)
 }
