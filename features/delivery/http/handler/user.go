@@ -44,16 +44,15 @@ func (uh *UserHandler) CreateUser(c *fiber.Ctx) (err error) {
 		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 	}
 
-	file, err := c.FormFile("user_picture")
-	if err != nil {
-		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
-	}
+	file, _ := c.FormFile("user_picture")
 
 	if file != nil {
-		input.UserPicture, err = aws.UploadFile(file)
+		s, err := aws.UploadFile(file)
 		if err != nil {
 			return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 		}
+
+		input.UserPicture = &s
 	}
 
 	res, err := uh.UserUsecase.CreateUser(c.Context(), input)
@@ -113,16 +112,15 @@ func (uh *UserHandler) UpdateUser(c *fiber.Ctx) (err error) {
 		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 	}
 
-	file, err := c.FormFile("user_picture")
-	if err != nil {
-		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
-	}
+	file, _ := c.FormFile("user_picture")
 
 	if file != nil {
-		input.UserPicture, err = aws.UploadFile(file)
+		s, err := aws.UploadFile(file)
 		if err != nil {
 			return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 		}
+
+		input.UserPicture = &s
 	}
 
 	err = uh.UserUsecase.UpdateUser(c.Context(), int64(id), input)
