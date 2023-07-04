@@ -46,6 +46,7 @@ type ProductMySQLRepository interface {
 	InsertProduct(ctx context.Context, req ProductRequest) (id int64, err error)
 	SelectProductByID(ctx context.Context, id int64) (product Product, err error)
 	SelectListProduct(ctx context.Context, offset, limit, categoryId int64) (product []ProductSQL, err error)
+	EditQty(ctx context.Context, id, qty int64) (err error)
 }
 
 // ProductUsecase is Product usecase

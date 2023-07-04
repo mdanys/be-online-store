@@ -106,3 +106,33 @@ func (db *mysqlProductRepository) SelectListProduct(ctx context.Context, offset,
 
 	return
 }
+
+func (db *mysqlProductRepository) EditQty(ctx context.Context, id, qty int64) (err error) {
+	query := `UPDATE product SET qty = ? WHERE id = ?`
+	log.Debug(query)
+
+	stmt, err := db.Conn.PrepareContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	res, err := stmt.ExecContext(ctx, qty, id)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if affect == 0 {
+		err = errors.New("no data updated")
+		return
+	}
+
+	return
+}

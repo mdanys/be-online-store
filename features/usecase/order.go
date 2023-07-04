@@ -10,33 +10,35 @@ import (
 )
 
 type orderUsecase struct {
-	orderMySQLRepo domain.OrderMySQLRepository
-	cartMySQLRepo  domain.CartMySQLRepository
+	orderMySQLRepo   domain.OrderMySQLRepository
+	cartMySQLRepo    domain.CartMySQLRepository
+	productMySQLRepo domain.ProductMySQLRepository
 }
 
-func NewOrderUsecase(orderMySQLRepo domain.OrderMySQLRepository, cartMySQLRepo domain.CartMySQLRepository) domain.OrderUsecase {
+func NewOrderUsecase(orderMySQLRepo domain.OrderMySQLRepository, cartMySQLRepo domain.CartMySQLRepository, productMySQLRepo domain.ProductMySQLRepository) domain.OrderUsecase {
 	return &orderUsecase{
-		orderMySQLRepo: orderMySQLRepo,
-		cartMySQLRepo:  cartMySQLRepo,
+		orderMySQLRepo:   orderMySQLRepo,
+		cartMySQLRepo:    cartMySQLRepo,
+		productMySQLRepo: productMySQLRepo,
 	}
 }
 
-func (cu *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link string, err error) {
+func (ou *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link string, err error) {
 	temp := uuid.New()
 	orderId := "Order-" + temp.String()
 	var grandTotal float64
 	for _, v := range cartId {
-		cart, er := cu.cartMySQLRepo.SelectCartByID(ctx, v)
+		cart, er := ou.cartMySQLRepo.SelectCartByID(ctx, v)
 		if er != nil {
 			log.Error(er)
 			return
 		}
 
-		totalPrice := cart.ProductPrice * float64(cart.CartQty)
+		totalPrice := *cart.ProductPrice * float64(*cart.CartQty)
 		grandTotal += totalPrice
 		status := "waiting"
 
-		err = cu.orderMySQLRepo.InsertOrder(ctx, domain.OrderRequest{
+		err = ou.orderMySQLRepo.InsertOrder(ctx, domain.OrderRequest{
 			OrderID:    &orderId,
 			CartID:     &v,
 			TotalPrice: &totalPrice,
@@ -50,6 +52,49 @@ func (cu *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link 
 
 	pay := midtrans.OrderMidtrans(orderId, int64(grandTotal))
 	link = pay.RedirectURL
+
+	return
+}
+
+func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string) (err error) {
+	check := midtrans.CheckMidtrans(orderId)
+	status := check.TransactionStatus
+
+	order, err := ou.orderMySQLRepo.SelectOrderByOrderID(ctx, orderId)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	for _, v := range order {
+		err = ou.orderMySQLRepo.EditOrderStatus(ctx, status, v.ID)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
+		if status == "settlement" {
+			cart, er := ou.cartMySQLRepo.SelectCartByID(ctx, *v.CartID)
+			if er != nil {
+				log.Error(er)
+				return
+			}
+
+			product, er := ou.productMySQLRepo.SelectProductByID(ctx, *cart.ProductID)
+			if er != nil {
+				log.Error(er)
+				return
+			}
+
+			qty := *product.Qty - *cart.CartQty
+
+			err = ou.productMySQLRepo.EditQty(ctx, *cart.ProductID, qty)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+		}
+	}
 
 	return
 }

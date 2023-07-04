@@ -37,7 +37,7 @@ func main() {
 	cartUsecase := usecase.NewCartUsecase(cartRepo, productRepo)
 
 	orderRepo := mysql.NewMySQLOrderRepository(dbConn)
-	orderUsecase := usecase.NewOrderUsecase(orderRepo, cartRepo)
+	orderUsecase := usecase.NewOrderUsecase(orderRepo, cartRepo, productRepo)
 
 	http.RouteAPI(app, userUsecase, categoryUsecase, productUsecase, cartUsecase, orderUsecase)
 

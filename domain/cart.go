@@ -20,14 +20,16 @@ type CartRequest struct {
 }
 
 type CartSQL struct {
-	CartID         int64   `json:"cart_id"`
-	UserName       string  `json:"user_name"`
-	CategoryName   string  `json:"category_name"`
-	ProductName    string  `json:"product_name"`
-	ProductPrice   float64 `json:"product_price"`
-	ProductPicture string  `json:"product_picture"`
-	ProductQty     int64   `json:"product_qty"`
-	CartQty        int64   `json:"cart_qty"`
+	CartID         *int64   `json:"cart_id"`
+	UserID         *int64   `json:"user_id"`
+	UserName       *string  `json:"user_name"`
+	CategoryName   *string  `json:"category_name"`
+	ProductID      *int64   `json:"product_id"`
+	ProductName    *string  `json:"product_name"`
+	ProductPrice   *float64 `json:"product_price"`
+	ProductPicture *string  `json:"product_picture"`
+	ProductQty     *int64   `json:"product_qty"`
+	CartQty        *int64   `json:"cart_qty"`
 }
 
 type CartResponse struct {
