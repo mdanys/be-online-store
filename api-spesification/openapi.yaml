@@ -1,0 +1,857 @@
+openapi: 3.0.0
+info:
+  title: be-online-store
+  description: Online Store
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: http://44.211.148.102
+    description: AWS server
+
+tags:
+  - name: Login
+    description: Login section
+  - name: User
+    description: User management
+  - name: Category
+    description: Category management
+  - name: Product
+    description: Product management
+  - name: Cart
+    description: Cart management
+  - name: Order
+    description: Order management
+
+paths:
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Login Section
+      description: Login Section
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestLogin'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestLogin'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseLogin'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /user:
+    post:
+      tags:
+        - User
+      summary: Register Section
+      description: Register Section
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestCreateUser'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCreateUser'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - User
+      summary: Get All User (ADMIN)
+      description: Get All User for Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    type: object
+                    properties:                      
+                      total_data:
+                        type: integer
+                        example: 10
+                      total_page:
+                        type: integer
+                        example: 1
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResponseUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - User
+      summary: Edit User (Customer)
+      description: Edit User for Customer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateUser'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateUser'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /user/{id}:
+    get:
+      tags:
+        - User
+      summary: Get User By ID
+      description: Get User By ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUser'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /category:
+    post:
+      tags:
+        - Category
+      summary: Create Category (ADMIN)
+      description: Create Category for Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestCreateCategory'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /product:
+    post:
+      tags:
+        - Product
+      summary: Create Product (ADMIN)
+      description: Create Product for Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestCreateProduct'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCreateProduct'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCreateProduct'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Product
+      summary: Get List Product
+      description: Get List Product
+      parameters:
+        - name: page
+          in: query
+          description: Page
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Limit
+          schema:
+            type: integer
+        - name: category_id
+          in: query
+          description: Category ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    type: object
+                    properties:                      
+                      total_data:
+                        type: integer
+                        example: 10
+                      total_page:
+                        type: integer
+                        example: 1
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResponseProduct'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart:
+    post:
+      tags:
+        - Cart
+      summary: Create Cart (CUSTOMER)
+      description: Create Cart for Customer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestCreateCart'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCreateCart'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Cart
+      summary: Get Cart By User ID (CUSTOMER)
+      description: Get Cart By User ID for Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Limit
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    type: object
+                    properties:                      
+                      total_data:
+                        type: integer
+                        example: 10
+                      total_page:
+                        type: integer
+                        example: 1
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResponseCart'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /cart/{id}:
+    delete:
+      tags:
+        - Cart
+      summary: Get Cart for (CUSTOMER)
+      description: Get Cart for Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order:
+    post:
+      tags:
+        - Order
+      summary: Create Order (CUSTOMER)
+      description: Create Order for Customer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cart_id:
+                  type: array
+                  description: Cart ID
+          application/json:
+            schema:
+              type: object
+              properties:
+                cart_id:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RequestCreateOrder'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCreateOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /order/{order_id}:
+    put:
+      tags:
+        - Order
+      summary: Edit Order Status (CUSTOMER)
+      description: Edit Order Status for Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          description: Order ID
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Order
+      summary: Get Order By Order ID (CUSTOMER)
+      description: Get Order By Order ID for Customer
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          description: Order ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    RequestCreateCategory:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    RequestCreateProduct:
+      type: object
+      properties:
+        category_id:
+          type: integer
+          description: Category ID
+        name:
+          type: string
+          description: Name
+        price:
+          type: number
+          description: Price
+        qty:
+          type: integer
+          description: Qty
+        rating:
+          type: number
+          description: Rating
+        detail:
+          type: string
+          description: Detail
+        product_picture:
+          type: string
+          format: binary
+      required:
+        - category_id
+        - name
+        - price
+        - qty
+    RequestLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Password
+      required:
+        - email
+        - password
+    RequestCreateUser:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Password
+        name:
+          type: string
+          description: Name
+        dob:
+          type: string
+          description: Dob
+        gender:
+          type: string
+          description: Gender
+        address:
+          type: string
+          description: Address
+        user_picture:
+          type: string
+          format: binary
+      required:
+        - email
+        - password
+        - name
+    RequestUpdateUser:
+      type: object
+      properties:
+        password:
+          type: string
+          description: Password
+        name:
+          type: string
+          description: Name
+        dob:
+          type: string
+          description: Dob
+        gender:
+          type: string
+          description: Gender
+        address:
+          type: string
+          description: Address
+        user_picture:
+          type: string
+          format: binary
+          description: User Picture
+    RequestCreateCart:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          description: Product ID
+        qty:
+          type: integer
+          description: Qty
+      required:
+        - product_id
+        - qty
+    RequestCreateOrder:
+      type: object
+      properties:
+        cart_id:
+          type: integer
+          description: Cart ID
+    ResponseLogin:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: johndoe@gmail.com
+        name:
+          type: string
+          example: John Doe
+        role:
+          type: string
+          example: Customer
+        dob:
+          type: string
+          format: date
+        gender:
+          type: string
+          example: M
+        address:
+          type: string
+          example: Jalan Menuju Kebenaran
+        user_picture:
+          type: string
+          example: https://www.aws.com
+        dtm_crt:
+          type: string
+          format: date
+        dtm_upd:
+          type: string
+          format: date
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+    ResponseUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: johndoe@gmail.com
+        name:
+          type: string
+          example: John Doe
+        role:
+          type: string
+          example: Customer
+        dob:
+          type: string
+          format: date
+        gender:
+          type: string
+          example: M
+        address:
+          type: string
+          example: Jalan Menuju Kebenaran
+        user_picture:
+          type: string
+          example: https://www.aws.com
+        dtm_crt:
+          type: string
+          format: date
+        dtm_upd:
+          type: string
+          format: date
+    ResponseCreateProduct:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        category_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        price:
+          type: number
+          example: 100000
+        qty:
+          type: integer
+          example: 10
+        rating:
+          type: number
+          example: 4.5
+        detail:
+          type: string
+          example: This is John Doe
+        product_picture:
+          type: string
+          example: https://www.aws.com
+        dtm_crt:
+          type: string
+          format: date
+        dtm_upd:
+          type: string
+          format: date
+    ResponseProduct:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          example: 1
+        category_name:
+          type: string
+          example: Shirt
+        product_name:
+          type: string
+          example: John Doe
+        product_price:
+          type: number
+          example: 100000
+        product_qty:
+          type: integer
+          example: 10
+        product_rating:
+          type: number
+          example: 4.5
+        product_detail:
+          type: string
+          example: This is John Doe
+        product_picture:
+          type: string
+          example: https://www.aws.com
+        dtm_crt:
+          type: string
+          format: date
+        dtm_upd:
+          type: string
+          format: date
+    ResponseCart:
+      type: object
+      properties:
+        cart_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        user_name:
+          type: string
+          example: John Doe
+        category_name:
+          type: string
+          example: Shirt
+        product_id:
+          type: integer
+          example: 1
+        product_name:
+          type: string
+          example: John Doe
+        product_price:
+          type: number
+          example: 100000
+        product_picture:
+          type: string
+          example: https://www.aws.com
+        product_qty:
+          type: integer
+          example: 10
+        cart_qty:
+          type: integer
+          example: 3
+    ResponseCreateOrder:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Success
+        redirect_link:
+          type: string
+          example: https://www.midtrans.com
+    ResponseOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        order_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        cart_id:
+          type: integer
+          example: 1
+        total_price:
+          type: number
+          example: 100000
+        status:
+          type: string
+          example: settlement
+        dtm_crt:
+          type: string
+          format: date
+        dtm_upd:
+          type: string
+          format: date
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Success
+    Created:
+      description: Created
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Created
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Bad request
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Unauthorized
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Forbidden
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Not found
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: string
+            example: Internal server error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

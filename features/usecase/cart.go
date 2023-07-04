@@ -58,8 +58,10 @@ func (cu *cartUsecase) GetCartByUserID(ctx context.Context, page, limit, userId 
 	for _, v := range c {
 		cart.Data = append(cart.Data, domain.CartSQL{
 			CartID:         v.CartID,
+			UserID:         v.UserID,
 			UserName:       v.UserName,
 			CategoryName:   v.CategoryName,
+			ProductID:      v.ProductID,
 			ProductName:    v.ProductName,
 			ProductPrice:   v.ProductPrice,
 			ProductPicture: v.ProductPicture,

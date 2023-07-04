@@ -94,12 +94,6 @@ func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string, u
 				log.Error(err)
 				return
 			}
-
-			err = ou.cartMySQLRepo.RemoveCart(ctx, *cart.CartID, userId)
-			if err != nil {
-				log.Error(err)
-				return
-			}
 		}
 	}
 

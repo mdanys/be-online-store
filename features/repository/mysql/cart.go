@@ -40,7 +40,7 @@ func (db *mysqlCartRepository) InsertCart(ctx context.Context, req domain.CartRe
 }
 
 func (db *mysqlCartRepository) SelectCartByUserID(ctx context.Context, offset, limit, userId int64) (cart []domain.CartSQL, err error) {
-	query := `SELECT c.id, u.name, ca.name, p.name, p.price, p.product_picture, p.qty, c.qty FROM cart c
+	query := `SELECT c.id, c.user_id, u.name, ca.name, c.product_id, p.name, p.price, p.product_picture, p.qty, c.qty FROM cart c
 	INNER JOIN user u ON u.id = c.user_id INNER JOIN product p ON p.id = c.product_id
 	INNER JOIN category ca ON ca.id = p.category_id WHERE c.user_id = ? LIMIT ? OFFSET ?`
 	log.Debug(query)
@@ -60,7 +60,7 @@ func (db *mysqlCartRepository) SelectCartByUserID(ctx context.Context, offset, l
 
 	for rows.Next() {
 		var i domain.CartSQL
-		err = rows.Scan(&i.CartID, &i.UserName, &i.CategoryName, &i.ProductName, &i.ProductPrice, &i.ProductPicture,
+		err = rows.Scan(&i.CartID, &i.UserID, &i.UserName, &i.CategoryName, &i.ProductID, &i.ProductName, &i.ProductPrice, &i.ProductPicture,
 			&i.ProductQty, &i.CartQty)
 
 		cart = append(cart, i)
@@ -70,7 +70,7 @@ func (db *mysqlCartRepository) SelectCartByUserID(ctx context.Context, offset, l
 }
 
 func (db *mysqlCartRepository) CountCartByUserID(ctx context.Context, userId int64) (count int64, err error) {
-	query := `COUNT(id) FROM cart WHERE user_id = ?`
+	query := `SELECT COUNT(id) FROM cart WHERE user_id = ?`
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)

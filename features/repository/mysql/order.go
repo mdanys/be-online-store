@@ -20,7 +20,7 @@ func NewMySQLOrderRepository(Conn *sql.DB) domain.OrderMySQLRepository {
 }
 
 func (db *mysqlOrderRepository) InsertOrder(ctx context.Context, req domain.OrderRequest) (err error) {
-	query := `INSERT INTO order (order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd) VALUES (?, ?, ?, ?, NOW(), NOW())`
+	query := "INSERT INTO `order` (order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd) VALUES (?, ?, ?, ?, ?, NOW(), NOW())"
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
@@ -40,7 +40,7 @@ func (db *mysqlOrderRepository) InsertOrder(ctx context.Context, req domain.Orde
 }
 
 func (db *mysqlOrderRepository) EditOrderStatus(ctx context.Context, status string, id int64) (err error) {
-	query := `UPDATE order SET status = ? WHERE id = ?`
+	query := "UPDATE `order` SET status = ? WHERE id = ?"
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
@@ -70,7 +70,7 @@ func (db *mysqlOrderRepository) EditOrderStatus(ctx context.Context, status stri
 }
 
 func (db *mysqlOrderRepository) SelectOrderByOrderID(ctx context.Context, orderId string, userId int64) (order []domain.Order, err error) {
-	query := `SELECT id, order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd FROM order WHERE order_id = ? AND user_id = ?`
+	query := "SELECT id, order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd FROM `order` WHERE order_id = ? AND user_id = ?"
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
