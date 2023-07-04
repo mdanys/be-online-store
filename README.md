@@ -127,7 +127,7 @@ password : admin123
 
 _For more examples, please refer to the [OPEN API](https://app.swaggerhub.com/apis-docs/mdanys/be-online-store/1.0.0#/)_
 
-[![Online-API][product-screenshot]](https://github.com/mdanys/be-online-store/blob/main/utils/online-learning-platform.png)
+[![Online-API][product-screenshot]](https://github.com/mdanys/be-online-store/blob/main/utils/be-online-store.png)
 
 
 
