@@ -61,7 +61,7 @@ func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string, u
 	check := midtrans.CheckMidtrans(orderId)
 	status := check.TransactionStatus
 
-	order, err := ou.orderMySQLRepo.SelectOrderByOrderID(ctx, orderId)
+	order, err := ou.orderMySQLRepo.SelectOrderByOrderID(ctx, orderId, userId)
 	if err != nil {
 		log.Error(err)
 		return
@@ -101,6 +101,16 @@ func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string, u
 				return
 			}
 		}
+	}
+
+	return
+}
+
+func (ou *orderUsecase) GetOrderByOrderID(ctx context.Context, orderId string, userId int64) (order []domain.Order, err error) {
+	order, err = ou.orderMySQLRepo.SelectOrderByOrderID(ctx, orderId, userId)
+	if err != nil {
+		log.Error(err)
+		return
 	}
 
 	return

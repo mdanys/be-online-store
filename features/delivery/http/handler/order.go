@@ -46,3 +46,19 @@ func (oh *OrderHandler) UpdateOrderStatus(c *fiber.Ctx) (err error) {
 
 	return c.Status(fasthttp.StatusOK).SendString("Success")
 }
+
+func (oh *OrderHandler) GetOrderByOrderID(c *fiber.Ctx) (err error) {
+	userId, role := middleware.ExtractToken(c)
+	if role != "customer" {
+		return c.Status(fasthttp.StatusUnauthorized).SendString("Only customer")
+	}
+
+	orderId := c.Params("order_id")
+
+	res, err := oh.OrderUsecase.GetOrderByOrderID(c.Context(), orderId, userId)
+	if err != nil {
+		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
+	}
+
+	return c.Status(fasthttp.StatusOK).JSON(res)
+}

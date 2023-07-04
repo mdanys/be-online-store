@@ -69,8 +69,8 @@ func (db *mysqlOrderRepository) EditOrderStatus(ctx context.Context, status stri
 	return
 }
 
-func (db *mysqlOrderRepository) SelectOrderByOrderID(ctx context.Context, orderId string) (order []domain.Order, err error) {
-	query := `SELECT id, order_id, cart_id, total_price, status, dtm_crt, dtm_upd FROM order WHERE order_id = ?`
+func (db *mysqlOrderRepository) SelectOrderByOrderID(ctx context.Context, orderId string, userId int64) (order []domain.Order, err error) {
+	query := `SELECT id, order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd FROM order WHERE order_id = ? AND user_id = ?`
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
@@ -79,7 +79,7 @@ func (db *mysqlOrderRepository) SelectOrderByOrderID(ctx context.Context, orderI
 		return
 	}
 
-	rows, err := stmt.QueryContext(ctx, orderId)
+	rows, err := stmt.QueryContext(ctx, orderId, userId)
 	if err != nil {
 		log.Error(err)
 		return
@@ -88,7 +88,7 @@ func (db *mysqlOrderRepository) SelectOrderByOrderID(ctx context.Context, orderI
 
 	for rows.Next() {
 		var i domain.Order
-		err = rows.Scan(&i.ID, &i.OrderID, &i.CartID, &i.TotalPrice, &i.Status, &i.DtmCrt, &i.DtmUpd)
+		err = rows.Scan(&i.ID, &i.OrderID, &i.UserID, &i.CartID, &i.TotalPrice, &i.Status, &i.DtmCrt, &i.DtmUpd)
 		if err != nil {
 			log.Error(err)
 			return

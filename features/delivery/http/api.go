@@ -55,4 +55,5 @@ func RouteAPI(app *fiber.App, user domain.UserUsecase, category domain.CategoryU
 	// Order
 	app.Post("/order", authRequired(), handlerOrder.CreateOrder)
 	app.Put("/order/:order_id", authRequired(), handlerOrder.UpdateOrderStatus)
+	app.Get("/order/:order_id", authRequired(), handlerOrder.GetOrderByOrderID)
 }
