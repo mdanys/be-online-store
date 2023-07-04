@@ -29,7 +29,7 @@ CREATE TABLE `product` (
     `qty`                   BIGINT          NOT NULL,
     `rating`                DECIMAL(2,1),
     `detail`                TEXT,
-    `picture`               VARCHAR(1024),
+    `product_picture`       VARCHAR(1024),
     `dtm_crt`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `dtm_upd`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

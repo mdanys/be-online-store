@@ -20,9 +20,10 @@ func authRequired() fiber.Handler {
 	})
 }
 
-func RouteAPI(app *fiber.App, user domain.UserUsecase, category domain.CategoryUsecase) {
+func RouteAPI(app *fiber.App, user domain.UserUsecase, category domain.CategoryUsecase, product domain.ProductUsecase) {
 	handlerUser := &handler.UserHandler{UserUsecase: user}
 	handlerCategory := &handler.CategoryHandler{CategoryUsecase: category}
+	handlerProduct := &handler.ProductHandler{ProductUsecase: product}
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello World!")
@@ -39,4 +40,7 @@ func RouteAPI(app *fiber.App, user domain.UserUsecase, category domain.CategoryU
 
 	// Category
 	app.Post("/category", authRequired(), handlerCategory.CreateCategory)
+
+	// Product
+	app.Post("/product", authRequired(), handlerProduct.CreateProduct)
 }
