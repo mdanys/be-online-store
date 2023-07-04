@@ -41,6 +41,7 @@ type CartMySQLRepository interface {
 	SelectCartByUserID(ctx context.Context, offset, limit, userId int64) (cart []CartSQL, err error)
 	CountCartByUserID(ctx context.Context, userId int64) (count int64, err error)
 	RemoveCart(ctx context.Context, cartId, userId int64) (err error)
+	SelectCartByID(ctx context.Context, id int64) (cart CartSQL, err error)
 }
 
 // CartUsecase is Cart usecase

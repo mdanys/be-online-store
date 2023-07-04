@@ -36,7 +36,10 @@ func main() {
 	cartRepo := mysql.NewMySQLCartRepository(dbConn)
 	cartUsecase := usecase.NewCartUsecase(cartRepo, productRepo)
 
-	http.RouteAPI(app, userUsecase, categoryUsecase, productUsecase, cartUsecase)
+	orderRepo := mysql.NewMySQLOrderRepository(dbConn)
+	orderUsecase := usecase.NewOrderUsecase(orderRepo, cartRepo)
+
+	http.RouteAPI(app, userUsecase, categoryUsecase, productUsecase, cartUsecase, orderUsecase)
 
 	if err := app.Listen(":" + strconv.Itoa(config.NewConfig().ServerPort)); err != nil {
 		log.Fatal(err)

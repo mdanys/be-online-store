@@ -47,8 +47,10 @@ CREATE TABLE `cart` (
 
 CREATE TABLE `order` (
     `id`                    BIGINT          NOT NULL AUTO_INCREMENT,
+    `order_id`              VARCHAR(255)    NOT NULL,
     `cart_id`               BIGINT          NOT NULL,
     `total_price`           DECIMAL(10,2)   NOT NULL,
+    `status`                VARCHAR(255)    NOT NULL,
     `dtm_crt`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `dtm_upd`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
