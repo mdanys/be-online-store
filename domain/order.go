@@ -36,5 +36,5 @@ type OrderMySQLRepository interface {
 // OrderUsecase is Order usecase
 type OrderUsecase interface {
 	CreateOrder(ctx context.Context, orderId ...int64) (link string, err error)
-	UpdateOrderStatus(ctx context.Context, orderId string) (err error)
+	UpdateOrderStatus(ctx context.Context, orderId string, userId int64) (err error)
 }

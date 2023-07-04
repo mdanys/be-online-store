@@ -32,14 +32,14 @@ func (oh *OrderHandler) CreateOrder(c *fiber.Ctx) (err error) {
 }
 
 func (oh *OrderHandler) UpdateOrderStatus(c *fiber.Ctx) (err error) {
-	_, role := middleware.ExtractToken(c)
+	userId, role := middleware.ExtractToken(c)
 	if role != "customer" {
 		return c.Status(fasthttp.StatusUnauthorized).SendString("Only customer")
 	}
 
 	orderId := c.Params("order_id")
 
-	err = oh.OrderUsecase.UpdateOrderStatus(c.Context(), orderId)
+	err = oh.OrderUsecase.UpdateOrderStatus(c.Context(), orderId, userId)
 	if err != nil {
 		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
 	}

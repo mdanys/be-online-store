@@ -56,7 +56,7 @@ func (ou *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link 
 	return
 }
 
-func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string) (err error) {
+func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string, userId int64) (err error) {
 	check := midtrans.CheckMidtrans(orderId)
 	status := check.TransactionStatus
 
@@ -89,6 +89,12 @@ func (ou *orderUsecase) UpdateOrderStatus(ctx context.Context, orderId string) (
 			qty := *product.Qty - *cart.CartQty
 
 			err = ou.productMySQLRepo.EditQty(ctx, *cart.ProductID, qty)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+
+			err = ou.cartMySQLRepo.RemoveCart(ctx, *cart.CartID, userId)
 			if err != nil {
 				log.Error(err)
 				return
