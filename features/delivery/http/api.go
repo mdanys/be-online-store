@@ -48,4 +48,5 @@ func RouteAPI(app *fiber.App, user domain.UserUsecase, category domain.CategoryU
 
 	// Cart
 	app.Post("/cart", authRequired(), handlerCart.CreateCart)
+	app.Get("/cart", authRequired(), handlerCart.GetCartByUserID)
 }
