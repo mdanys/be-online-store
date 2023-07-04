@@ -151,5 +151,5 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [issues-url]: https://github.com/mdanys/be-online-store/issues
 [license-shield]: https://img.shields.io/github/license/mdanys/be-online-store?style=for-the-badge
 [license-url]: https://github.com/mdanys/be-online-store/blob/main/LICENSE
-[product-screenshot]: utils/online-learning-platform.png
+[product-screenshot]: utils/be-online-store.png
 [erd-screenshot]: utils/ERD.drawio.png
