@@ -32,3 +32,14 @@ func (pu *productUsecase) CreateProduct(ctx context.Context, req domain.ProductR
 
 	return
 }
+
+func (pu *productUsecase) GetListProduct(ctx context.Context, page, limit, categoryId int64) (product []domain.ProductSQL, err error) {
+	offset := limit * (page - 1)
+	product, err = pu.productMySQLRepo.SelectListProduct(ctx, offset, limit, categoryId)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}
