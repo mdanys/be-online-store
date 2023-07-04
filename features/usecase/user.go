@@ -34,7 +34,7 @@ func (uu *userUsecase) GetUserLogin(ctx context.Context, req domain.LoginRequest
 		return
 	}
 
-	s, err := middleware.GenerateToken(int(data.ID), *data.Role)
+	s, err := middleware.GenerateToken(int64(data.ID), *data.Role)
 	if err != nil {
 		log.Error(err)
 		return

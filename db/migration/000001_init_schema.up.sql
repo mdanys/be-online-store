@@ -40,6 +40,7 @@ CREATE TABLE `cart` (
     `id`                    BIGINT          NOT NULL AUTO_INCREMENT,
     `user_id`               BIGINT          NOT NULL,
     `product_id`            BIGINT          NOT NULL,
+    `qty`                   BIGINT          NOT NULL,
     `dtm_upd`               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 );
