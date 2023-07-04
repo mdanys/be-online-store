@@ -109,3 +109,13 @@ func (ou *orderUsecase) GetOrderByOrderID(ctx context.Context, orderId string, u
 
 	return
 }
+
+func (ou *orderUsecase) GetOrderByUserID(ctx context.Context, userId int64) (order []domain.Order, err error) {
+	order, err = ou.orderMySQLRepo.SelectOrderByUserID(ctx, userId)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}

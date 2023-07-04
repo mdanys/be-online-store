@@ -33,6 +33,7 @@ type OrderMySQLRepository interface {
 	InsertOrder(ctx context.Context, req OrderRequest) (err error)
 	EditOrderStatus(ctx context.Context, status string, id int64) (err error)
 	SelectOrderByOrderID(ctx context.Context, orderId string, userId int64) (order []Order, err error)
+	SelectOrderByUserID(ctx context.Context, userId int64) (order []Order, err error)
 }
 
 // OrderUsecase is Order usecase
@@ -40,4 +41,5 @@ type OrderUsecase interface {
 	CreateOrder(ctx context.Context, userId int64, orderId ...int64) (link string, err error)
 	UpdateOrderStatus(ctx context.Context, orderId string, userId int64) (err error)
 	GetOrderByOrderID(ctx context.Context, orderId string, userId int64) (order []Order, err error)
+	GetOrderByUserID(ctx context.Context, userId int64) (order []Order, err error)
 }

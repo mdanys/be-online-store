@@ -99,3 +99,34 @@ func (db *mysqlOrderRepository) SelectOrderByOrderID(ctx context.Context, orderI
 
 	return
 }
+
+func (db *mysqlOrderRepository) SelectOrderByUserID(ctx context.Context, userId int64) (order []domain.Order, err error) {
+	query := "SELECT id, order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd FROM `order` WHERE user_id = ?"
+	log.Debug(query)
+
+	stmt, err := db.Conn.PrepareContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	rows, err := stmt.QueryContext(ctx, userId)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var i domain.Order
+		err = rows.Scan(&i.ID, &i.OrderID, &i.UserID, &i.CartID, &i.TotalPrice, &i.Status, &i.DtmCrt, &i.DtmUpd)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
+		order = append(order, i)
+	}
+
+	return
+}
