@@ -118,3 +118,26 @@ func (db *mysqlCartRepository) RemoveCart(ctx context.Context, cartId, userId in
 
 	return
 }
+
+func (db *mysqlCartRepository) SelectCartByID(ctx context.Context, id int64) (cart domain.CartSQL, err error) {
+	query := `SELECT c.id, c.user_id, u.name, ca.name, c.product_id, p.name, p.price, p.product_picture, p.qty, c.qty FROM cart c
+	INNER JOIN user u ON u.id = c.user_id INNER JOIN product p ON p.id = c.product_id
+	INNER JOIN category ca ON ca.id = p.category_id WHERE c.id = ?`
+	log.Debug(query)
+
+	stmt, err := db.Conn.PrepareContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	row := stmt.QueryRowContext(ctx, id)
+	err = row.Scan(&cart.CartID, &cart.UserID, &cart.UserName, &cart.CategoryName, &cart.ProductID, &cart.ProductName,
+		&cart.ProductPrice, &cart.ProductPicture, &cart.ProductQty, &cart.CartQty)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}
