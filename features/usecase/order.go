@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"be-online-store/domain"
+	"be-online-store/utils/midtrans"
 	"context"
 
 	"github.com/google/uuid"
@@ -46,6 +47,9 @@ func (cu *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link 
 			return
 		}
 	}
+
+	pay := midtrans.OrderMidtrans(orderId, int64(grandTotal))
+	link = pay.RedirectURL
 
 	return
 }

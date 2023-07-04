@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/jwt/v3 v3.3.10
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/joho/godotenv v1.5.1
+	github.com/midtrans/midtrans-go v1.3.6
 	github.com/sirupsen/logrus v1.9.3
 )
 
@@ -24,7 +25,7 @@ require (
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/klauspost/compress v1.16.3 // indirect
