@@ -4,6 +4,7 @@ import (
 	"be-online-store/domain"
 	"context"
 	"errors"
+	"strconv"
 
 	"database/sql"
 
@@ -61,6 +62,46 @@ func (db *mysqlProductRepository) SelectProductByID(ctx context.Context, id int6
 	if err != nil {
 		log.Error(err)
 		return
+	}
+
+	return
+}
+
+func (db *mysqlProductRepository) SelectListProduct(ctx context.Context, offset, limit, categoryId int64) (product []domain.ProductSQL, err error) {
+	query := `SELECT p.id, c.name, p.name, p.price, p.qty, p.rating, p.detail, p.product_picture, p.dtm_crt, p.dtm_upd FROM product p
+	INNER JOIN category c ON c.id = p.category_id`
+
+	if categoryId != 0 {
+		query += ` WHERE p.category_id = ` + strconv.Itoa(int(categoryId))
+	}
+
+	if limit > 0 {
+		query += " LIMIT " + strconv.Itoa(int(limit))
+	}
+
+	if offset > 0 {
+		query += " OFFSET " + strconv.Itoa(int(offset))
+	}
+
+	log.Debug(query)
+
+	rows, err := db.Conn.QueryContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var i domain.ProductSQL
+		err = rows.Scan(&i.ProductID, &i.CategoryName, &i.ProductName, &i.ProductPrice, &i.ProductQty, &i.ProductRating,
+			&i.ProductDetail, &i.ProductPicture, &i.DtmCrt, &i.DtmUpd)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
+		product = append(product, i)
 	}
 
 	return
