@@ -88,3 +88,33 @@ func (db *mysqlCartRepository) CountCartByUserID(ctx context.Context, userId int
 
 	return
 }
+
+func (db *mysqlCartRepository) RemoveCart(ctx context.Context, cartId, userId int64) (err error) {
+	query := `DELETE FROM cart WHERE id = ? AND user_id = ?`
+	log.Debug(query)
+
+	stmt, err := db.Conn.PrepareContext(ctx, query)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	res, err := stmt.ExecContext(ctx, cartId, userId)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if affected == 0 {
+		err = errors.New("no data has been deleted")
+		return
+	}
+
+	return
+}

@@ -65,3 +65,25 @@ func (ch *CartHandler) GetCartByUserID(c *fiber.Ctx) (err error) {
 
 	return c.Status(fasthttp.StatusOK).JSON(res)
 }
+
+func (ch *CartHandler) DeleteCart(c *fiber.Ctx) (err error) {
+	userId, role := middleware.ExtractToken(c)
+	if role != "customer" {
+		return c.Status(fasthttp.StatusUnauthorized).SendString("Only customer")
+	}
+
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+	}
+
+	err = ch.CartUsecase.DeleteCart(c.Context(), int64(id), userId)
+	if err != nil {
+		if err.Error() == "no data has been deleted" {
+			return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
+		}
+		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
+	}
+
+	return c.Status(fasthttp.StatusOK).SendString("Success")
+}

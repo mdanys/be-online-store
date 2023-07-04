@@ -77,3 +77,13 @@ func (cu *cartUsecase) GetCartByUserID(ctx context.Context, page, limit, userId 
 
 	return
 }
+
+func (cu *cartUsecase) DeleteCart(ctx context.Context, cartId, userId int64) (err error) {
+	err = cu.cartMySQLRepo.RemoveCart(ctx, cartId, userId)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}

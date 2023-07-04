@@ -40,10 +40,12 @@ type CartMySQLRepository interface {
 	InsertCart(ctx context.Context, req CartRequest) (err error)
 	SelectCartByUserID(ctx context.Context, offset, limit, userId int64) (cart []CartSQL, err error)
 	CountCartByUserID(ctx context.Context, userId int64) (count int64, err error)
+	RemoveCart(ctx context.Context, cartId, userId int64) (err error)
 }
 
 // CartUsecase is Cart usecase
 type CartUsecase interface {
 	CreateCart(ctx context.Context, req CartRequest) (err error)
 	GetCartByUserID(ctx context.Context, page, limit, userId int64) (cart CartResponse, err error)
+	DeleteCart(ctx context.Context, cartId, userId int64) (err error)
 }
