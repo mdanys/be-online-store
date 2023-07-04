@@ -8,6 +8,7 @@ import (
 type Order struct {
 	ID         int64     `json:"id"`
 	OrderID    *string   `json:"order_id"`
+	UserID     *int64    `json:"user_id"`
 	CartID     *int64    `json:"cart_id"`
 	TotalPrice *float64  `json:"total_price"`
 	Status     *string   `json:"status"`
@@ -17,6 +18,7 @@ type Order struct {
 
 type OrderRequest struct {
 	OrderID    *string  `json:"order_id"`
+	UserID     *int64   `json:"user_id"`
 	CartID     *int64   `json:"cart_id"`
 	TotalPrice *float64 `json:"total_price"`
 	Status     *string  `json:"status"`
@@ -35,6 +37,6 @@ type OrderMySQLRepository interface {
 
 // OrderUsecase is Order usecase
 type OrderUsecase interface {
-	CreateOrder(ctx context.Context, orderId ...int64) (link string, err error)
+	CreateOrder(ctx context.Context, userId int64, orderId ...int64) (link string, err error)
 	UpdateOrderStatus(ctx context.Context, orderId string, userId int64) (err error)
 }

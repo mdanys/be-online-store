@@ -23,7 +23,7 @@ func NewOrderUsecase(orderMySQLRepo domain.OrderMySQLRepository, cartMySQLRepo d
 	}
 }
 
-func (ou *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link string, err error) {
+func (ou *orderUsecase) CreateOrder(ctx context.Context, userId int64, cartId ...int64) (link string, err error) {
 	temp := uuid.New()
 	orderId := "Order-" + temp.String()
 	var grandTotal float64
@@ -40,6 +40,7 @@ func (ou *orderUsecase) CreateOrder(ctx context.Context, cartId ...int64) (link 
 
 		err = ou.orderMySQLRepo.InsertOrder(ctx, domain.OrderRequest{
 			OrderID:    &orderId,
+			UserID:     &userId,
 			CartID:     &v,
 			TotalPrice: &totalPrice,
 			Status:     &status,

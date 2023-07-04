@@ -13,7 +13,7 @@ type OrderHandler struct {
 }
 
 func (oh *OrderHandler) CreateOrder(c *fiber.Ctx) (err error) {
-	_, role := middleware.ExtractToken(c)
+	userId, role := middleware.ExtractToken(c)
 	if role != "customer" {
 		return c.Status(fasthttp.StatusUnauthorized).SendString("Only customer")
 	}
@@ -23,7 +23,7 @@ func (oh *OrderHandler) CreateOrder(c *fiber.Ctx) (err error) {
 		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 	}
 
-	link, err := oh.OrderUsecase.CreateOrder(c.Context(), input.CartID...)
+	link, err := oh.OrderUsecase.CreateOrder(c.Context(), userId, input.CartID...)
 	if err != nil {
 		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
 	}

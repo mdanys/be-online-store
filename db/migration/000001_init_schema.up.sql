@@ -48,6 +48,7 @@ CREATE TABLE `cart` (
 CREATE TABLE `order` (
     `id`                    BIGINT          NOT NULL AUTO_INCREMENT,
     `order_id`              VARCHAR(255)    NOT NULL,
+    `user_id`               BIGINT          NOT NULL,
     `cart_id`               BIGINT          NOT NULL,
     `total_price`           DECIMAL(10,2)   NOT NULL,
     `status`                VARCHAR(255)    NOT NULL,

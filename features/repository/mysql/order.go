@@ -20,7 +20,7 @@ func NewMySQLOrderRepository(Conn *sql.DB) domain.OrderMySQLRepository {
 }
 
 func (db *mysqlOrderRepository) InsertOrder(ctx context.Context, req domain.OrderRequest) (err error) {
-	query := `INSERT INTO order (order_id, cart_id, total_price, status, dtm_crt, dtm_upd) VALUES (?, ?, ?, ?, NOW(), NOW())`
+	query := `INSERT INTO order (order_id, user_id, cart_id, total_price, status, dtm_crt, dtm_upd) VALUES (?, ?, ?, ?, NOW(), NOW())`
 	log.Debug(query)
 
 	stmt, err := db.Conn.PrepareContext(ctx, query)
@@ -29,7 +29,7 @@ func (db *mysqlOrderRepository) InsertOrder(ctx context.Context, req domain.Orde
 		return
 	}
 
-	_, err = stmt.ExecContext(ctx, req.OrderID, req.CartID, req.TotalPrice, req.Status)
+	_, err = stmt.ExecContext(ctx, req.OrderID, req.UserID, req.CartID, req.TotalPrice, req.Status)
 	if err != nil {
 		err = errors.New("failed to create order")
 		log.Error(err)
