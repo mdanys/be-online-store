@@ -52,7 +52,7 @@ func (uh *UserHandler) CreateUser(c *fiber.Ctx) (err error) {
 			return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 		}
 
-		input.UserPicture = &s
+		input.UserPicture = s
 	}
 
 	res, err := uh.UserUsecase.CreateUser(c.Context(), input)
@@ -120,7 +120,7 @@ func (uh *UserHandler) UpdateUser(c *fiber.Ctx) (err error) {
 			return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 		}
 
-		input.UserPicture = &s
+		input.UserPicture = s
 	}
 
 	err = uh.UserUsecase.UpdateUser(c.Context(), int64(id), input)

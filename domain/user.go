@@ -39,13 +39,13 @@ type UserResponse struct {
 }
 
 type UserRequest struct {
-	Email       *string `json:"email" form:"email" validate:"required,email"`
-	Password    *string `json:"password" form:"password" validate:"required"`
-	Name        *string `json:"name" form:"name" validate:"required"`
-	Dob         *string `json:"dob" form:"dob"`
-	Gender      *string `json:"gender" form:"gender"`
-	Address     *string `json:"address" form:"address"`
-	UserPicture *string `json:"user_picture" form:"user_picture"`
+	Email       string `json:"email" form:"email" validate:"required,email"`
+	Password    string `json:"password" form:"password" validate:"required"`
+	Name        string `json:"name" form:"name" validate:"required"`
+	Dob         string `json:"dob" form:"dob"`
+	Gender      string `json:"gender" form:"gender"`
+	Address     string `json:"address" form:"address"`
+	UserPicture string `json:"user_picture" form:"user_picture"`
 }
 
 type GetAllResponse struct {

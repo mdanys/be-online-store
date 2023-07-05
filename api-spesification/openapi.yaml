@@ -5,10 +5,10 @@ info:
   version: 1.0.0
 
 servers:
+  - url: http://13.229.81.133
+    description: AWS server
   - url: http://localhost:8000
     description: Local development server
-  - url: http://44.211.148.102
-    description: AWS server
 
 tags:
   - name: Login
@@ -406,7 +406,8 @@ paths:
               properties:
                 cart_id:
                   type: array
-                  description: Cart ID
+                  items:
+                    description: Cart ID
           application/json:
             schema:
               type: object
