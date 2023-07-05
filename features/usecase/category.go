@@ -26,3 +26,13 @@ func (cu *categoryUsecase) CreateCategory(ctx context.Context, name string) (err
 
 	return
 }
+
+func (cu *categoryUsecase) GetAllCategory(ctx context.Context) (category []domain.Category, err error) {
+	category, err = cu.categoryMySQLRepo.SelectAllCategory(ctx)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	return
+}

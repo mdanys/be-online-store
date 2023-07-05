@@ -12,12 +12,12 @@ type CategoryHandler struct {
 	CategoryUsecase domain.CategoryUsecase
 }
 
-func (uh *CategoryHandler) CreateCategory(c *fiber.Ctx) (err error) {
+func (ch *CategoryHandler) CreateCategory(c *fiber.Ctx) (err error) {
 	_, role := middleware.ExtractToken(c)
 	if role != "admin" {
 		return c.Status(fasthttp.StatusUnauthorized).SendString("Only admin")
 	}
-	
+
 	var input domain.CategoryRequest
 	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
@@ -28,10 +28,19 @@ func (uh *CategoryHandler) CreateCategory(c *fiber.Ctx) (err error) {
 		return c.Status(fasthttp.StatusBadRequest).SendString(err.Error())
 	}
 
-	err = uh.CategoryUsecase.CreateCategory(c.Context(), input.Name)
+	err = ch.CategoryUsecase.CreateCategory(c.Context(), input.Name)
 	if err != nil {
 		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
 	}
 
 	return c.Status(fasthttp.StatusOK).SendString("Success")
+}
+
+func (ch *CategoryHandler) GetAllCategory(c *fiber.Ctx) (err error) {
+	res, err := ch.CategoryUsecase.GetAllCategory(c.Context())
+	if err != nil {
+		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
+	}
+
+	return c.Status(fasthttp.StatusOK).JSON(res)
 }

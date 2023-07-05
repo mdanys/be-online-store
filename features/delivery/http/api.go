@@ -42,6 +42,7 @@ func RouteAPI(app *fiber.App, user domain.UserUsecase, category domain.CategoryU
 
 	// Category
 	app.Post("/category", authRequired(), handlerCategory.CreateCategory)
+	app.Get("/category", handlerCategory.GetAllCategory)
 
 	// Product
 	app.Post("/product", authRequired(), handlerProduct.CreateProduct)

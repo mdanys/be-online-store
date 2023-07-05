@@ -19,9 +19,11 @@ type CategoryRequest struct {
 // CategoryMySQLRepository is Category repository in MySQL
 type CategoryMySQLRepository interface {
 	InsertCategory(ctx context.Context, name string) (err error)
+	SelectAllCategory(ctx context.Context) (category []Category, err error)
 }
 
 // CategoryUsecase is Category usecase
 type CategoryUsecase interface {
 	CreateCategory(ctx context.Context, name string) (err error)
+	GetAllCategory(ctx context.Context) (category []Category, err error)
 }
