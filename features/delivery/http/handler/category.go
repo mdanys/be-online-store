@@ -37,11 +37,6 @@ func (ch *CategoryHandler) CreateCategory(c *fiber.Ctx) (err error) {
 }
 
 func (ch *CategoryHandler) GetAllCategory(c *fiber.Ctx) (err error) {
-	_, role := middleware.ExtractToken(c)
-	if role != "admin" {
-		return c.Status(fasthttp.StatusUnauthorized).SendString("Only admin")
-	}
-
 	res, err := ch.CategoryUsecase.GetAllCategory(c.Context())
 	if err != nil {
 		return c.Status(fasthttp.StatusInternalServerError).SendString(err.Error())
