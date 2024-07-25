@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:1.23rc2
 
 ##buat folder APP
 RUN mkdir /be-online-store
